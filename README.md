@@ -1,6 +1,8 @@
 ﻿## Repository description
 <p>This is the example Python project that illustrates how to use a REVIGO core library for your own projects.</p>
-<p>To run this example you need the pythonnet package, RevigoCore library and a set of precompiled databases available <a href="http://revigo.irb.hr/RevigoDatabases.zip" target="_blank">here</a>.</p>
+<p>To run this example you need the pythonnet package, RevigoCore library and a set of precompiled databases available 
+<a href="http://revigo.irb.hr/Databases/GeneOntology.xml.gz" target="_blank">here</a> and 
+<a href="http://revigo.irb.hr/Databases/SpeciesAnnotations.xml.gz" target="_blank">here</a>.</p>
 
 ## About REVIGO (REduce + VIsualize Gene Ontology) project
 <p>Outcomes of high-throughput biological experiments are typically interpreted by statistical testing
