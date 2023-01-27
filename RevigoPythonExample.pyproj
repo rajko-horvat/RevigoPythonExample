@@ -43,6 +43,7 @@
       <Publish>True</Publish>
     </Content>
     <Content Include="LICENSE" />
+    <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.11" />
