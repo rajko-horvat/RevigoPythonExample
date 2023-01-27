@@ -49,9 +49,9 @@ def main():
 	eMeasure = SemanticSimilarityScoreEnum.SIMREL
 	bRemoveObsolete = True
 	print("Loading Ontology")
-	oOntology = GeneOntology("C:\\Revigo\\Databases\\go.obo")
+	oOntology = GeneOntology.Deserialize("C:\\Revigo\\Databases\\Current\\GeneOntology.xml.gz")
 	print("Loading Species Annotations")
-	oAnnotations = SpeciesAnnotationsList.Deserialize("C:\\Revigo\\Databases\\SpeciesAnnotations.xml")
+	oAnnotations = SpeciesAnnotationsList.Deserialize("C:\\Revigo\\Databases\\Current\\SpeciesAnnotations.xml.gz")
 	sExample1 = None
 	sExample2 = None
 	sExample3 = None
