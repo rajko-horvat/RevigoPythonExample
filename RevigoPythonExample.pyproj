@@ -11,8 +11,6 @@
     <OutputPath>.</OutputPath>
     <Name>RevigoPythonExample</Name>
     <RootNamespace>RevigoPythonExample</RootNamespace>
-    <IsWindowsApplication>False</IsWindowsApplication>
-    <InterpreterId>Global|PythonCore|3.11</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,13 +22,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="RevigoPythonExample.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RevigoCore\RevigoCore.csproj">
-      <Name>RevigoCore</Name>
-      <Project>{aa96a7d4-51f2-4e90-9fec-0e84c2a367ed}</Project>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Example1.csv">
@@ -46,14 +37,11 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|PythonCore|3.11" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Name>mscorlib</Name>
-      <AssemblyName>mscorlib.dll</AssemblyName>
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\mscorlib.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\RevigoCore\RevigoCore.csproj">
+      <Name>RevigoCore</Name>
+      <Project>{aa96a7d4-51f2-4e90-9fec-0e84c2a367ed}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
