@@ -36,7 +36,7 @@ import math
 from clr_loader import get_coreclr
 from pythonnet import set_runtime
 
-set_runtime(get_coreclr(runtime_config="runtimeconfig.json"))
+set_runtime(get_coreclr(runtime_config="PythonRuntimeConfig.json"))
 
 import clr
 

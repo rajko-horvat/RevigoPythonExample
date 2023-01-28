@@ -24,25 +24,12 @@
     <Compile Include="RevigoPythonExample.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Example1.csv">
-      <Publish>True</Publish>
-    </Content>
-    <Content Include="Example2.csv">
-      <Publish>True</Publish>
-    </Content>
-    <Content Include="Example3.csv">
-      <Publish>True</Publish>
-    </Content>
+    <Content Include="Example1.csv" />
+    <Content Include="Example2.csv" />
+    <Content Include="Example3.csv" />
     <Content Include="LICENSE" />
     <Content Include="README.md" />
-    <Content Include="runtimeconfig.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RevigoCore\RevigoCore.csproj">
-      <Name>RevigoCore</Name>
-      <Project>{aa96a7d4-51f2-4e90-9fec-0e84c2a367ed}</Project>
-      <Private>True</Private>
-    </ProjectReference>
+    <Content Include="PythonRuntimeConfig.json" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
