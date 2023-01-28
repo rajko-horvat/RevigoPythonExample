@@ -31,6 +31,13 @@
     <Content Include="README.md" />
     <Content Include="PythonRuntimeConfig.json" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RevigoCore\RevigoCore.csproj">
+      <Name>RevigoCore</Name>
+      <Project>{aa96a7d4-51f2-4e90-9fec-0e84c2a367ed}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
        Visual Studio and specify your pre- and post-build commands in
