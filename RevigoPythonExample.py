@@ -31,15 +31,22 @@
 #		SOFTWARE.
 
 import time
-import clr
 import math
 
+from clr_loader import get_coreclr
+from pythonnet import set_runtime
+
+set_runtime(get_coreclr(runtime_config="runtimeconfig.json"))
+
+import clr
+
 clr.AddReference("RevigoCore")
-clr.AddReference("mscorlib")
 from IRB.Revigo.Worker import RevigoWorker, ProgressEventArgs, ValueTypeEnum, RequestSourceEnum
 from IRB.Revigo.Core import SemanticSimilarityScoreEnum, GOTermList
 from IRB.Revigo.Databases import SpeciesAnnotationsList, GeneOntology
 from IRB.Revigo import Utilities
+
+clr.AddReference("mscorlib")
 from System.IO import StreamWriter
 
 def main():

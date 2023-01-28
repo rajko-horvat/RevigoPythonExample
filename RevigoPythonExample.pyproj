@@ -35,6 +35,7 @@
     </Content>
     <Content Include="LICENSE" />
     <Content Include="README.md" />
+    <Content Include="runtimeconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RevigoCore\RevigoCore.csproj">
