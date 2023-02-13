@@ -1,5 +1,7 @@
 ﻿## Repository description
 <p>This is the example Python project that illustrates how to use a REVIGO core library for your own projects.</p>
+
+## How to compile and use this example
 <p>To run this example you need the pythonnet package, a precompiled RevigoCore library and a set of precompiled databases available 
 	<a href="http://revigo.irb.hr/Databases/GeneOntology.xml.gz" target="_blank">here</a> (Gene Ontology) and 
 	<a href="http://revigo.irb.hr/Databases/SpeciesAnnotations.xml.gz" target="_blank">here</a> (Species annotations), 
