@@ -1,8 +1,8 @@
 ﻿## Repository description
 <p>This is the example Python project that illustrates how to use a REVIGO core library for your own projects.</p>
 
-## How to compile and run this example
-<p>To run this example:
+## How to run this example
+<p>To compile from command line:
 <ul>
 	<li>git clone https://github.com/rajko-horvat/RevigoPythonExample</li>
 	<li>Install pythonnet package (pip install pythonnet)</li>
