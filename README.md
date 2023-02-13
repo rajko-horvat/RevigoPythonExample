@@ -6,7 +6,7 @@
 <ul>
 	<li>git clone https://github.com/rajko-horvat/RevigoPythonExample</li>
 	<li>Install pythonnet package (pip install pythonnet)</li>
-	<li>Compile RevigoCore library (copy generated binaries to RevigoPythonExample directory)</li>
+	<li>Compile <a href="https://github.com/rajko-horvat/RevigoCore">RevigoCore library</a> (copy generated binaries to RevigoPythonExample directory)</li>
 	<li>Download a set of precompiled databases:
 	<a href="http://revigo.irb.hr/Databases/GeneOntology.xml.gz" target="_blank">Gene Ontology</a> and 
 	<a href="http://revigo.irb.hr/Databases/SpeciesAnnotations.xml.gz" target="_blank">Species annotations</a>, 
