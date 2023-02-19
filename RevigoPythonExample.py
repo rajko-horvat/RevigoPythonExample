@@ -30,7 +30,6 @@
 #		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #		SOFTWARE.
 
-from pickle import NONE
 import time
 import math
 
@@ -42,10 +41,9 @@ set_runtime(get_coreclr(runtime_config="PythonRuntimeConfig.json"))
 import clr
 
 clr.AddReference("RevigoCore")
-from IRB.Revigo.Worker import RevigoWorker, ProgressEventArgs, ValueTypeEnum, RequestSourceEnum
-from IRB.Revigo.Core import SemanticSimilarityScoreEnum, GOTermList
-from IRB.Revigo.Databases import SpeciesAnnotationsList, GeneOntology
-from IRB.Revigo import Utilities
+from IRB.Revigo.Core.Worker import RevigoWorker, ValueTypeEnum, RequestSourceEnum
+from IRB.Revigo.Core import SemanticSimilarityTypeEnum, RevigoTerm, RevigoTermCollection, Utilities
+from IRB.Revigo.Core.Databases import GeneOntology, SpeciesAnnotationList
 
 clr.AddReference("mscorlib")
 from System.IO import StreamWriter
@@ -54,12 +52,12 @@ def main():
 	dCutoff = 0.7
 	eValueType = ValueTypeEnum.PValue
 	iSpeciesTaxon = 0
-	eMeasure = SemanticSimilarityScoreEnum.SIMREL
+	eMeasure = SemanticSimilarityTypeEnum.SIMREL
 	bRemoveObsolete = True
 	print("Loading Ontology")
 	oOntology = GeneOntology.Deserialize("C:\\Revigo\\Databases\\Current\\GeneOntology.xml.gz")
 	print("Loading Species Annotations")
-	oAnnotations = SpeciesAnnotationsList.Deserialize("C:\\Revigo\\Databases\\Current\\SpeciesAnnotations.xml.gz")
+	oAnnotations = SpeciesAnnotationList.Deserialize("C:\\Revigo\\Databases\\Current\\SpeciesAnnotations.xml.gz")
 	sExample1 = None
 	sExample2 = None
 	sExample3 = None
@@ -92,7 +90,7 @@ def main():
 
 	# Create worker 2
 	oWorker2 = RevigoWorker(2, oOntology, oAnnotations.GetByID(9606), 20, RequestSourceEnum.JubSubmitting,
-		sExample2, 0.9, eValueType, SemanticSimilarityScoreEnum.LIN, bRemoveObsolete);
+		sExample2, 0.9, eValueType, SemanticSimilarityTypeEnum.LIN, bRemoveObsolete);
 
 	# Create worker 3
 	oWorker3 = RevigoWorker(3, oOntology, oAnnotations.GetByID(iSpeciesTaxon), 20, RequestSourceEnum.JubSubmitting,
@@ -127,10 +125,9 @@ def main():
 	# We are finished
 
 def ExportTable(ontology, worker, visualizer, fileName):
-	if visualizer != None:
+	if visualizer.IsEmpty != True:
 		with open(fileName, 'w') as oWriter:
-			oTerms = GOTermList(visualizer.Terms)
-			oTerms.FindClustersAndSortByThem(ontology, worker.AllProperties, worker.CutOff)
+			oTerms = visualizer.Terms.FindClustersAndSortByThem(ontology, worker.CutOff)
 
 			oWriter.write("TermID\tName\tValue\t")
 			c = 1
@@ -143,25 +140,24 @@ def ExportTable(ontology, worker, visualizer, fileName):
 			# print the data
 			i = 0
 			while i < oTerms.Count:
-				oTerm = oTerms[i]
-				oProperties = worker.AllProperties.GetValueByKey(oTerm.ID)
+				term = oTerms[i]
 
-				oWriter.write("\"{}\"\t".format(oTerm.FormattedID))
-				oWriter.write("\"{}\"\t".format(oTerm.Name))
-				oWriter.write("{}\t".format(oProperties.Value))
+				oWriter.write("\"{}\"\t".format(term.GOTerm.FormattedID))
+				oWriter.write("\"{}\"\t".format(term.GOTerm.Name))
+				oWriter.write("{}\t".format(term.Value))
 
 				c = 1
 				while c < worker.MinNumColsPerGoTerm:
-					oWriter.write("{}\t".format(oProperties.UserValues[c - 1]))
+					oWriter.write("{}\t".format(term.UserValues[c - 1]))
 					c += 1
 
-				oWriter.write("{}\t".format(oProperties.LogAnnotationSize))
-				oWriter.write("{}\t".format(oProperties.AnnotationFrequency * 100.0))
-				oWriter.write("{}\t".format(oProperties.Uniqueness))
-				oWriter.write("{}\t".format(oProperties.Dispensability))
+				oWriter.write("{}\t".format(term.LogAnnotationSize))
+				oWriter.write("{}\t".format(term.AnnotationFrequency * 100.0))
+				oWriter.write("{}\t".format(term.Uniqueness))
+				oWriter.write("{}\t".format(term.Dispensability))
 
-				if oProperties.Representative > 0:
-					oWriter.write("{}".format(oProperties.Representative));
+				if term.RepresentativeID > 0:
+					oWriter.write("{}".format(term.RepresentativeID));
 				else:
 					oWriter.write("null");
 
@@ -169,42 +165,39 @@ def ExportTable(ontology, worker, visualizer, fileName):
 				i += 1
 
 def ExportScatterplot(ontology, worker, visualizer, fileName):
-	if visualizer != None:
+	if visualizer.IsEmpty != True:
 		with open(fileName, 'w') as oWriter:
-			oTerms = GOTermList(visualizer.Terms)
-			oTerms.FindClustersAndSortByThem(ontology, worker.AllProperties, worker.CutOff)
+			oTerms = visualizer.Terms.FindClustersAndSortByThem(ontology, worker.CutOff)
 
 			oWriter.write("TermID\tName\tValue\tLogSize\tFrequency\tUniqueness\tDispensability\tPC_0\tPC_1\tRepresentative\n")
 
 			# print the data
 			i = 0
 			while i < oTerms.Count:
-				oTerm = oTerms[i]
-				oProperties = worker.AllProperties.GetValueByKey(oTerm.ID)
+				term = oTerms[i]
 
-				oWriter.write("\"{}\"\t".format(oTerm.FormattedID))
-				oWriter.write("\"{}\"\t".format(oTerm.Name))
-				oWriter.write("{}\t".format(oProperties.Value))
+				oWriter.write("\"{}\"\t".format(term.GOTerm.FormattedID))
+				oWriter.write("\"{}\"\t".format(term.GOTerm.Name))
+				oWriter.write("{}\t".format(term.Value))
 
-				oWriter.write("{}\t".format(oProperties.LogAnnotationSize))
-				oWriter.write("{}\t".format(oProperties.AnnotationFrequency * 100.0))
-				oWriter.write("{}\t".format(oProperties.Uniqueness))
-				oWriter.write("{}\t".format(oProperties.Dispensability))
+				oWriter.write("{}\t".format(term.LogAnnotationSize))
+				oWriter.write("{}\t".format(term.AnnotationFrequency * 100.0))
+				oWriter.write("{}\t".format(term.Uniqueness))
+				oWriter.write("{}\t".format(term.Dispensability))
 
 				# 2D
-				oWriter.write("{}\t".format(oProperties.PC[0] if (oProperties.PC.Count > 0) else "null"))
-				oWriter.write("{}\t".format(oProperties.PC[1] if (oProperties.PC.Count > 1) else "null"))
+				oWriter.write("{}\t".format(term.PC[0] if (term.PC.Count > 0) else "null"))
+				oWriter.write("{}\t".format(term.PC[1] if (term.PC.Count > 1) else "null"))
 
-				oWriter.write("{}".format(oProperties.Representative if (oProperties.Representative > 0) else "null"))
+				oWriter.write("{}".format(term.RepresentativeID if (term.RepresentativeID > 0) else "null"))
 
 				oWriter.write("\n")
 				i += 1
 
 def ExportTreeMap(ontology, worker, visualizer, fileName):
-	if visualizer != None:
+	if visualizer.IsEmpty != True:
 		with open(fileName, 'w') as oWriter:
-			terms = GOTermList(visualizer.Terms)
-			terms.FindClustersAndSortByThem(ontology, worker.AllProperties, 0.1)
+			terms = visualizer.Terms.FindClustersAndSortByThem(ontology, 0.1)
 
 			oWriter.write("# WARNING - This exported Revigo data is only useful for the specific purpose of constructing a TreeMap visualization.\n")
 			oWriter.write("# Do not use this table as a general list of non-redundant GO categories, as it sets an extremely permissive \n")
@@ -221,28 +214,28 @@ def ExportTreeMap(ontology, worker, visualizer, fileName):
 			# print the data
 			i = 0
 			while i < terms.Count:
-				curGOTerm = terms[i]
-				oProperties = worker.AllProperties.GetValueByKey(curGOTerm.ID)
-				isTermEliminated = oProperties.Dispensability > worker.CutOff
+				term = terms[i]
+				
+				isTermEliminated = term.Dispensability > worker.CutOff
 				if (isTermEliminated):
 					i += 1
 					continue # will not output terms below the dispensability threshold at all
 
-				oWriter.write("\"{}\"\t".format(curGOTerm.FormattedID))
-				oWriter.write("\"{}\"\t".format(curGOTerm.Name))
-				oWriter.write("{}\t".format(oProperties.AnnotationFrequency * 100.0))
+				oWriter.write("\"{}\"\t".format(term.GOTerm.FormattedID))
+				oWriter.write("\"{}\"\t".format(term.GOTerm.Name))
+				oWriter.write("{}\t".format(term.AnnotationFrequency * 100.0))
 
-				oWriter.write("{}\t".format(oProperties.Value))
+				oWriter.write("{}\t".format(term.Value))
 
 				c = 1
 				while c < worker.MinNumColsPerGoTerm:
-					oWriter.write("{}\t".format(oProperties.UserValues[c - 1]))
+					oWriter.write("{}\t".format(term.UserValues[c - 1]))
 					c += 1
 
-				oWriter.write("{}\t".format(oProperties.Uniqueness))
-				oWriter.write("{}\t".format(oProperties.Dispensability))
-				if oProperties.Representative > 0:
-					oWriter.write("\"{}\"".format(ontology.GetValueByKey(oProperties.Representative).Name))
+				oWriter.write("{}\t".format(term.Uniqueness))
+				oWriter.write("{}\t".format(term.Dispensability))
+				if term.RepresentativeID > 0:
+					oWriter.write("\"{}\"".format(ontology.GetValueByKey(term.RepresentativeID).Name))
 				else:
 					oWriter.write("null")
 
@@ -250,26 +243,26 @@ def ExportTreeMap(ontology, worker, visualizer, fileName):
 				i += 1
 
 def ExportCytoscapeXGMML(visualizer, fileName):
-	if visualizer != None:
+	if visualizer.IsEmpty != True:
 		oWriter = StreamWriter(fileName)
 		visualizer.SimpleOntologram.GraphToXGMML(oWriter)
 		oWriter.Close()
 
 def ExportSimMat(visualizer, fileName):
-	if visualizer != None:
+	if visualizer.IsEmpty != True:
 		with open(fileName, 'w') as oWriter:
 			i = 0
 			while i < visualizer.Terms.Length:
-				oWriter.write("\t{}".format(visualizer.Terms[i].FormattedID))
+				oWriter.write("\t{}".format(visualizer.Terms[i].GOTerm.FormattedID))
 				i += 1
 
 			oWriter.write("\n")
 			i = 0
 			while i < visualizer.Terms.Length:
-				oWriter.write(visualizer.Terms[i].FormattedID)
+				oWriter.write(visualizer.Terms[i].GOTerm.FormattedID)
 				j = 0
 				while j < visualizer.Terms.Length:
-					oWriter.write("\t{}".format(visualizer.Matrix.Matrix[i, j]))
+					oWriter.write("\t{}".format(visualizer.Matrix.GetSimilarity(i, j)))
 					j += 1
 
 				oWriter.write("\n")
@@ -278,7 +271,7 @@ def ExportSimMat(visualizer, fileName):
 def ExportWordClouds(worker, fileName):
 	with open(fileName, 'w') as oWriter:
 		oWriter.write("{")
-		if worker.Enrichments != None:
+		if worker.Enrichments.Count > 0:
 			oWriter.write("\"Enrichments\":[")
 
 			MIN_UNIT_SIZE = 1.0
@@ -323,8 +316,8 @@ def ExportWordClouds(worker, fileName):
 			
 			oWriter.write("]")
 
-		if worker.Correlations != None:
-			if worker.Enrichments != None:
+		if worker.Correlations.Count > 0:
+			if worker.Enrichments.Count > 0:
 				oWriter.write(",")
 
 			oWriter.write("\"Correlations\":[")
