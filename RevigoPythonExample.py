@@ -46,6 +46,7 @@ from IRB.Revigo.Core import SemanticSimilarityTypeEnum, RevigoTerm, RevigoTermCo
 from IRB.Revigo.Core.Databases import GeneOntology, SpeciesAnnotationList
 
 clr.AddReference("mscorlib")
+from System import TimeSpan
 from System.IO import StreamWriter
 
 def main():
@@ -79,21 +80,21 @@ def main():
 		oOntology, 
 		# Annotations for a given dataset
 		oAnnotations.GetByID(iSpeciesTaxon), 
-		# Timeout in minutes
-		20, 
+		# Timeout
+		TimeSpan(0, 15, 0), 
 		# Job source
-		RequestSourceEnum.JubSubmitting,
+		RequestSourceEnum.JobSubmitting,
 		# Dataset
 		sExample1, 
 		# Job parameters
 		dCutoff, eValueType, eMeasure, bRemoveObsolete)
 
 	# Create worker 2
-	oWorker2 = RevigoWorker(2, oOntology, oAnnotations.GetByID(9606), 20, RequestSourceEnum.JubSubmitting,
+	oWorker2 = RevigoWorker(2, oOntology, oAnnotations.GetByID(9606), TimeSpan(0, 15, 0), RequestSourceEnum.JobSubmitting,
 		sExample2, 0.9, eValueType, SemanticSimilarityTypeEnum.LIN, bRemoveObsolete);
 
 	# Create worker 3
-	oWorker3 = RevigoWorker(3, oOntology, oAnnotations.GetByID(iSpeciesTaxon), 20, RequestSourceEnum.JubSubmitting,
+	oWorker3 = RevigoWorker(3, oOntology, oAnnotations.GetByID(iSpeciesTaxon), TimeSpan(0, 15, 0), RequestSourceEnum.JobSubmitting,
 		sExample3, 0.4, eValueType, eMeasure, bRemoveObsolete);
 
 	# Workers will notify when the are finished processing the data
@@ -235,7 +236,7 @@ def ExportTreeMap(ontology, worker, visualizer, fileName):
 				oWriter.write("{}\t".format(term.Uniqueness))
 				oWriter.write("{}\t".format(term.Dispensability))
 				if term.RepresentativeID > 0:
-					oWriter.write("\"{}\"".format(ontology.GetValueByKey(term.RepresentativeID).Name))
+					oWriter.write("\"{}\"".format(ontology.Terms.GetValueByKey(term.RepresentativeID).Name))
 				else:
 					oWriter.write("null")
 
@@ -252,16 +253,16 @@ def ExportSimMat(visualizer, fileName):
 	if visualizer.IsEmpty != True:
 		with open(fileName, 'w') as oWriter:
 			i = 0
-			while i < visualizer.Terms.Length:
+			while i < visualizer.Terms.Count:
 				oWriter.write("\t{}".format(visualizer.Terms[i].GOTerm.FormattedID))
 				i += 1
 
 			oWriter.write("\n")
 			i = 0
-			while i < visualizer.Terms.Length:
+			while i < visualizer.Terms.Count:
 				oWriter.write(visualizer.Terms[i].GOTerm.FormattedID)
 				j = 0
-				while j < visualizer.Terms.Length:
+				while j < visualizer.Terms.Count:
 					oWriter.write("\t{}".format(visualizer.Matrix.GetSimilarity(i, j)))
 					j += 1
 
